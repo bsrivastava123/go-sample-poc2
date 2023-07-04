@@ -43,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: hello
-          path: hello/
+          path: hello
 
       - name: Build Docker image
         uses: docker/build-push-action@v2

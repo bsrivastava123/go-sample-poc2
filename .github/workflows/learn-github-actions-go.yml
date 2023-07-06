@@ -43,21 +43,18 @@ jobs:
         with:
           go-version: 1.x # Replace with the desired Go version
 
-      - name: Cache dependencies
-        id: cacheStep
-        uses: actions/cache@v2
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-
       - name: Install dependencies
-        if: steps.cacheStep.outputs.cache-hit != 'true'
-        run: go mod download
+        run: go get .
 
       - name: Test
-        run: go test
+        run: go test -json > TestResults-${{ github.event.repository.name }}.json
+
+      - name: Upload Go test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: Go-results-${{ github.event.repository.name }}
+          path: TestResults-${{ github.event.repository.name }}.json
+        
 
   build:
     name: Build
@@ -88,7 +85,7 @@ jobs:
 
       - name: Build application
         run: |
-          go build
+          go build -o ${{ github.event.repository.name }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3

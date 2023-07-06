@@ -53,13 +53,13 @@ jobs:
         run: go get .
 
       - name: Test
-        run: go test -json > TestResults-${{ github.event.repository.name }}.json
+        run: go test -json > TestResults-${{ inputs.service-name || github.event.repository.name }}.json
 
       - name: Upload Go test results
         uses: actions/upload-artifact@v3
         with:
-          name: Go-results-${{ inputs.service-name }}
-          path: TestResults-${{ inputs.service-name }}.json
+          name: Go-results-${{ inputs.service-name || github.event.repository.name }}
+          path: TestResults-${{ inputs.service-name || github.event.repository.name }}.json
         
 
   build:
@@ -91,17 +91,17 @@ jobs:
 
       - name: Build application
         run: |
-          go build -o ${{ inputs.service-name }}
+          go build -o ${{ inputs.service-name || github.event.repository.name }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ inputs.service-name }}
-          path: ${{ inputs.service-name }}
+          name: ${{ inputs.service-name || github.event.repository.name }}
+          path: ${{ inputs.service-name || github.event.repository.name }}
 
       - name: Build Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: false
-          tags: ${{ github.event.repository.name }}:latest # Replace with your Docker image repository and tag
+          tags: ${{ inputs.service-name || github.event.repository.name }}:latest # Replace with your Docker image repository and tag

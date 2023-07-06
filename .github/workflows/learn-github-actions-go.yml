@@ -10,9 +10,59 @@ on:
   workflow_call:
 
 jobs:
-  build:
-    name: Build and Test
+  lint:
+    name: Linting
     runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.x # Replace with the desired Go version
+
+      - name: Install golangci-lint
+        run: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.42.1 # Replace with the desired golangci-lint version
+
+      - name: Run linter
+        run: golangci-lint run
+  
+  unit-test:
+    name: Unit test
+    runs-on: ubuntu-latest
+    needs: [ lint ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.x # Replace with the desired Go version
+
+      - name: Cache dependencies
+        id: cacheStep
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Install dependencies
+        if: steps.cacheStep.outputs.cache-hit != 'true'
+        run: go mod download
+
+      - name: Test
+        run: npm run test
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [ unit-test ]
 
     steps:
       - name: Checkout repository
@@ -52,6 +102,3 @@ jobs:
           context: .
           push: false
           tags: go-sample/hello-go:latest # Replace with your Docker image repository and tag
-
-      - name: Run tests
-        run: go test

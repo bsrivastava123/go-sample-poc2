@@ -58,8 +58,8 @@ jobs:
       - name: Upload Go test results
         uses: actions/upload-artifact@v3
         with:
-          name: Go-results-${{ inputs.env }}
-          path: TestResults-${{ inputs.env }}.json
+          name: Go-results-${{ inputs.service-name }}
+          path: TestResults-${{ inputs.service-name }}.json
         
 
   build:
@@ -91,13 +91,13 @@ jobs:
 
       - name: Build application
         run: |
-          go build -o ${{ inputs.env }}
+          go build -o ${{ inputs.service-name }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ inputs.env }}
-          path: ${{ inputs.env }}
+          name: ${{ inputs.service-name }}
+          path: ${{ inputs.service-name }}
 
       - name: Build Docker image
         uses: docker/build-push-action@v2

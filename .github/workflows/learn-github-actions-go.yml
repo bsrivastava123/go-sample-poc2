@@ -72,7 +72,9 @@ jobs:
 
       - name: Test
         working-directory: ${{ inputs.working-directory }}
-        run: go test -v -cover ./... -json > TestResults-${{ inputs.service-name || github.event.repository.name }}.json
+        run: |
+          echo ${{ inputs.working-directory }}
+          go test -v -cover ./... -json > TestResults-${{ inputs.service-name || github.event.repository.name }}.json
        
 
       - name: Upload Go test results

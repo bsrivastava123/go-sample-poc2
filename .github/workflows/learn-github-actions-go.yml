@@ -11,7 +11,7 @@ on:
     inputs:
       
       service-name:
-        required: true
+        required: false
         type: string
         default: ${{ github.event.repository.name }}
 
@@ -29,13 +29,12 @@ jobs:
         with:
           go-version: 1.x # Replace with the desired Go version
 
-      - name: golangci-lint
+      - name: run lint
         uses: golangci/golangci-lint-action@v2
   
   unit-test:
     name: Unit test
     runs-on: ubuntu-latest
-   
 
     steps:
       - name: Checkout repository
@@ -46,11 +45,21 @@ jobs:
         with:
           go-version: 1.x # Replace with the desired Go version
 
+      - name: Cache dependencies
+        id: cacheStep
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+  
       - name: Install dependencies
-        run: go get .
+        if: steps.cacheStep.outputs.cache-hit != 'true'
+        run: go mod download
 
       - name: Test
-        run: go test -json > TestResults-${{ inputs.service-name || github.event.repository.name }}.json
+        run: go test -v -cover ./... -json > TestResults-${{ inputs.service-name || github.event.repository.name }}.json
 
       - name: Upload Go test results
         uses: actions/upload-artifact@v3
@@ -62,7 +71,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    
+    needs: [ unit-test, lint ]
 
     steps:
       - name: Checkout repository
@@ -87,7 +96,7 @@ jobs:
         run: go mod download
 
       - name: Build application
-        run: |
+        run: 
           go build -o ${{ inputs.service-name || github.event.repository.name }}
 
       - name: Upload Artifact
@@ -101,4 +110,4 @@ jobs:
         with:
           context: .
           push: false
-          tags: ${{ inputs.service-name || github.event.repository.name }}:latest # Replace with your Docker image repository and tag
+          tags: ${{ inputs.service-name || github.event.repository.name }}:latest

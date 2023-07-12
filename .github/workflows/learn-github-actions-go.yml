@@ -10,10 +10,10 @@ on:
   workflow_call:
     inputs:
       working-directory:
+        default: 'src'
         description: 'Directory to the folder in which the app is located.'
         required: true
         type: string
-        default: 'src'
       
       service-name:
         required: false

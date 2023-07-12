@@ -9,6 +9,10 @@ on:
       - main
   workflow_call:
     inputs:
+      working-directory:
+        description: 'Directory to the folder in which the app is located.'
+        required: true
+        type: string
       
       service-name:
         required: false
@@ -31,6 +35,9 @@ jobs:
 
       - name: run lint
         uses: golangci/golangci-lint-action@v2
+        with:
+          path: |
+            ${{ inputs.working-directory }}
   
   unit-test:
     name: Unit test
@@ -49,7 +56,9 @@ jobs:
         id: cacheStep
         uses: actions/cache@v2
         with:
-          path: ~/go/pkg/mod
+          path: |
+            ${{ inputs.working-directory }}
+            ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
@@ -57,9 +66,11 @@ jobs:
       - name: Install dependencies
         if: steps.cacheStep.outputs.cache-hit != 'true'
         run: go mod download
+        working-directory: ${{ inputs.working-directory }}
 
       - name: Test
         run: go test -v -cover ./... -json > TestResults-${{ inputs.service-name || github.event.repository.name }}.json
+        working-directory: ${{ inputs.working-directory }}
 
       - name: Upload Go test results
         uses: actions/upload-artifact@v3
@@ -86,7 +97,9 @@ jobs:
         id: cacheStep
         uses: actions/cache@v2
         with:
-          path: ~/go/pkg/mod
+          path: |
+            ${{ inputs.working-directory }}
+            ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
@@ -98,6 +111,7 @@ jobs:
       - name: Build application
         run: 
           go build -o ${{ inputs.service-name || github.event.repository.name }}
+        working-directory: ${{ inputs.working-directory }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3

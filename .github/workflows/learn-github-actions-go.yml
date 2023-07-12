@@ -13,6 +13,7 @@ on:
         description: 'Directory to the folder in which the app is located.'
         required: true
         type: string
+        default: src
       
       service-name:
         required: false

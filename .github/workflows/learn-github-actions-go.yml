@@ -84,8 +84,8 @@ jobs:
       - name: Upload Go test results
         uses: actions/upload-artifact@v3
         with:
-          name: TestResults-${{ inputs.artifact-name || github.event.repository.name }}
-          path: ${{ inputs.working-directory || 'src' }}/TestResults-${{ inputs.artifact-name || github.event.repository.name }}.json        
+          name: TestResults-${{ inputs.artifact-name || github.event.repository.name }}.json
+          path: ${{ inputs.working-directory || 'src' }}    
 
   build:
     name: Build

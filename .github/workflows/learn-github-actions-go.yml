@@ -71,16 +71,9 @@ jobs:
 
       - name: Test
         working-directory: ${{ inputs.working-directory || 'src' }}
-        run: |
-          echo '1' ${{ inputs.working-directory  ||  'src' }}
+        run:
           go test -v -cover ./... -json > TestResults-${{ inputs.artifact-name || github.event.repository.name }}.json
        
-  Upload-Test-Result:
-    name: Upload Test Result
-    runs-on: ubuntu-latest
-    needs: [ unit-test ]
-
-    steps:
       - name: Upload Go test results
         uses: actions/upload-artifact@v3
         with:

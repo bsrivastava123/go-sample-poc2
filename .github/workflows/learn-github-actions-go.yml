@@ -75,7 +75,11 @@ jobs:
           echo '1' ${{ inputs.working-directory  ||  'src' }}
           go test -v -cover ./... -json > TestResults-${{ inputs.artifact-name || github.event.repository.name }}.json
        
+  Upload-Test-Result:
+    name: Upload Test Result
+    runs-on: ubuntu-latest
 
+    steps:
       - name: Upload Go test results
         uses: actions/upload-artifact@v3
         with:
@@ -85,8 +89,7 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    
-
+  
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -115,13 +118,23 @@ jobs:
         run: 
           go build -o ${{ inputs.artifact-name || github.event.repository.name }}
         working-directory: ${{ inputs.working-directory  ||  'src' }}
+  
+  Upload-Artifact:
+    name: Upload Artifact
+    runs-on: ubuntu-latest
 
+    steps:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.artifact-name || github.event.repository.name }}
           path: ${{ inputs.working-directory  ||  'src' }}/${{ inputs.artifact-name || github.event.repository.name }}
-
+ 
+  Docker:
+    name: Build docker
+    runs-on: ubuntu-latest
+    
+    steps:
       - name: Build Docker image
         uses: docker/build-push-action@v2
         with:

@@ -35,7 +35,7 @@ jobs:
           go-version: 1.x # Replace with the desired Go version
 
       - name: run lint
-        uses: golangci/golangci-lint-action@v2
+        uses: matoous/golangci-lint-action@v1.1.0
         with:
           working-directory: ${{ inputs.working-directory }}
   

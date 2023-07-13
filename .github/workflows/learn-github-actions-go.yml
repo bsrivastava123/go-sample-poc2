@@ -34,13 +34,12 @@ jobs:
         with:
           go-version: 1.x # Replace with the desired Go version
 
-      - name: Install golangci-lint
-        run: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.42.1 # Replace with the desired golangci-lint version
-
-      - name: Run linter
-        run: golangci-lint run  
-        working-directory: ${{ inputs.working-directory }}  
-
+      - name: run lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          working-directory: ${{ inputs.working-directory }}
+  
+            
   unit-test:
     name: Unit test
     runs-on: ubuntu-latest
@@ -74,7 +73,7 @@ jobs:
       - name: Test
         working-directory: ${{ inputs.working-directory }}
         run: |
-          echo ${{ inputs.working-directory }}
+          echo '1' + ${{ inputs.working-directory }}
           go test -v -cover ./... -json > TestResults-${{ inputs.service-name || github.event.repository.name }}.json
        
 

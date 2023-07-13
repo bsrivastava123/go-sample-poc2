@@ -124,18 +124,12 @@ jobs:
           name: ${{ inputs.artifact-name || github.event.repository.name }}
           path: ${{ inputs.working-directory || 'src' }}/${{ inputs.artifact-name || github.event.repository.name }}
  
-  Docker:
-    name: Docker Build
-    runs-on: ubuntu-latest
-    needs: [ build ]
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
       - name: Build Docker image
         uses: docker/build-push-action@v2
         with:
           context: ${{ inputs.working-directory || 'src' }}
           push: false
-          tags: ${{ inputs.artifact-name || github.event.repository.name }}:${{ github.ref }}-${{ env.BUILD_VERSION }} # Use Git tag and build version in the Docker image tag
+          tags: ${{ inputs.artifact-name || github.event.repository.name }}:${{ github.ref }}-${{ env.BUILD_VERSION }} # Use Git tag and build version in the Docker image tag    
+
+
+      

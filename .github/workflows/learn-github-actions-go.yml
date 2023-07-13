@@ -32,13 +32,12 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.x # Replace with the desired Go version
+          go-version: 1.x # Replace with the desired Go version  
 
       - name: run lint
         uses: golangci/golangci-lint-action@v2
         with:
-          working-directory: ${{ github.event.inputs.project-folder }}
-  
+          working-directory: ${{ contains(github.event.inputs.project-folder , 'src') }}
             
   unit-test:
     name: Unit test
@@ -58,7 +57,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ${{ github.event.inputs.project-folder }}
+            ${{ contains(github.event.inputs.project-folder , 'src') }}
             ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
@@ -66,14 +65,14 @@ jobs:
   
       - name: Install dependencies
         if: steps.cacheStep.outputs.cache-hit != 'true'
-        working-directory: ${{ github.event.inputs.project-folder }}
+        working-directory: ${{ contains(github.event.inputs.project-folder , 'src') }}
         run: go mod download
         
 
       - name: Test
-        working-directory: ${{ github.event.inputs.project-folder }}
+        working-directory: ${{ contains(github.event.inputs.project-folder , 'src') }}
         run: |
-          echo '1' ${{ github.event.inputs.project-folder }}
+          echo '1' ${{ contains(github.event.inputs.project-folder , 'src') }}
           go test -v -cover ./... -json > TestResults-${{ inputs.service-name || github.event.repository.name }}.json
        
 
@@ -103,7 +102,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            ${{ github.event.inputs.project-folder }}
+            ${{ contains(github.event.inputs.project-folder , 'src') }}
             ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
@@ -116,7 +115,7 @@ jobs:
       - name: Build application
         run: 
           go build -o ${{ inputs.service-name || github.event.repository.name }}
-        working-directory: ${{ github.event.inputs.project-folder }}
+        working-directory: ${{ contains(github.event.inputs.project-folder , 'src') }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3

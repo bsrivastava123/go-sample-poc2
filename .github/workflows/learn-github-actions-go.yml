@@ -37,7 +37,7 @@ jobs:
       - name: run lint
         uses: golangci/golangci-lint-action@v2
         with:
-          path: ${{ inputs.working-directory }}
+          working-directory: ${{ inputs.working-directory }}
   
             
   unit-test:

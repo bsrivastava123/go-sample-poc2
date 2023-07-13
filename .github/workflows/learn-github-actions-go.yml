@@ -9,7 +9,7 @@ on:
       - main
   workflow_call:
     inputs:
-      project-folder:
+      working-directory:
         description: 'Directory to the folder in which the app is located.'
         required: true
         type: string

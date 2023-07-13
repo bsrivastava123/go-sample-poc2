@@ -138,4 +138,4 @@ jobs:
         with:
           context: ${{ inputs.working-directory || 'src' }}
           push: false
-          tags: ${{ inputs.artifact-name || github.event.repository.name }}:latest
+          tags: ${{ inputs.artifact-name || github.event.repository.name }}:${{ github.ref }}-${{ env.BUILD_VERSION }} # Use Git tag and build version in the Docker image tag

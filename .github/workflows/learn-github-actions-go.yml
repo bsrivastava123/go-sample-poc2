@@ -34,12 +34,13 @@ jobs:
         with:
           go-version: 1.x # Replace with the desired Go version
 
-      - name: run lint
-        uses: matoous/golangci-lint-action@v1.1.0
-        with:
-          working-directory: ${{ inputs.working-directory }}
-  
-            
+      - name: Install golangci-lint
+        run: curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.42.1 # Replace with the desired golangci-lint version
+
+      - name: Run linter
+        run: golangci-lint run  
+        working-directory: ${{ inputs.working-directory }}  
+
   unit-test:
     name: Unit test
     runs-on: ubuntu-latest

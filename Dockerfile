@@ -5,7 +5,7 @@ FROM golang:1.20
 WORKDIR /app
 
 # Copy the Go module files
-COPY *.* ./
+COPY src/*.* ./
 
 # Download the Go module dependencies
 RUN go mod download

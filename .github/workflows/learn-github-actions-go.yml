@@ -28,12 +28,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with: 
+          fetch-depth: 0
 
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.x # Replace with the desired Go version  
-          cache-dependency-path: src/go.sum
+          go-version: 1.x # Replace with the desired Go version
 
       - name: run lint
         uses: golangci/golangci-lint-action@v3

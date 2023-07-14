@@ -101,9 +101,9 @@ jobs:
           path: ${{ inputs.working-directory || 'src' }}
 
       - name: Build Docker image
-      uses: docker/build-push-action@v2
-      with:
-        context: ${{ inputs.working-directory || 'src' }}
-        push: false
-        tags: ${{ inputs.artifact-name || github.event.repository.name }}:latest
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ inputs.working-directory || 'src' }}
+          push: false
+         tags: ${{ inputs.artifact-name || github.event.repository.name }}:latest
   

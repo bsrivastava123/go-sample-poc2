@@ -86,6 +86,7 @@ jobs:
 
       - name: Install dependencies
         run: go mod download
+        working-directory: ${{ inputs.working-directory || 'src' }}
 
       - name: Build application
         run: 

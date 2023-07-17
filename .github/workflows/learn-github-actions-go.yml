@@ -97,7 +97,7 @@ jobs:
   
       - name: Set build number
         id: build_number
-        run: echo "BUILD_NUMBER=$(( ${{ github.run_number }} + ${{ github.event.pull_request.number }} ))" >> $GITHUB_ENV
+        run: echo "BUILD_NUMBER=$(( ${{ github.run_number }} + '' ${{ github.event.pull_request.number }} ))" >> $GITHUB_ENV
   
       - name: Build Docker image
         uses: docker/build-push-action@v2

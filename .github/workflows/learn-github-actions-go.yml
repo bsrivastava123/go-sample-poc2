@@ -89,13 +89,20 @@ jobs:
         run: go mod download
         working-directory: ${{ inputs.working-directory || 'src' }}
 
+
       - name: Build application
-        run: 
-          go build -o ${{ inputs.artifact-name || github.event.repository.name }}
+        run: go build -v -ldflags "-X main.version=${{ github.ref }}" -o hello-go .
         working-directory: ${{ inputs.working-directory || 'src' }}
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+  
+      - name: Set build number
+        id: build_number
+        run: echo "BUILD_NUMBER=$(( ${{ github.run_number }} + ${{ github.event.pull_request.number }} ))" >> $GITHUB_ENV
+  
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
         with:
-          name: ${{ inputs.artifact-name || github.event.repository.name }}
-          path: ${{ inputs.working-directory || 'src' }}
+          context: .
+          push: false
+          tags: your-repo/hello-go:${{ github.ref }}-${{ env.BUILD_NUMBER }} # Use Git tag and build number as the Docker image tag
+  

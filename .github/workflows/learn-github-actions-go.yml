@@ -92,7 +92,7 @@ jobs:
       - name: Determine PR tag
         id: pr_tag
         if: ${{ github.ref != 'refs/heads/main' }}
-        run: echo "::set-output name=pr_tag::0.0.PR-${{ github.ref == 'refs/pull/*'  && github.event.pull_request.number }}|| 'main'}}"
+        run: echo "::set-output name=pr_tag::0.0.PR-${{ github.ref == 'refs/pull/'  && github.event.pull_request.number }}|| 'main'}}"
       
       - name: Build application
         run:  

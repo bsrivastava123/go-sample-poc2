@@ -89,9 +89,15 @@ jobs:
         run: go mod download
         working-directory: ${{ inputs.working-directory || 'src' }}
 
+      - name: Determine PR tag
+        id: pr_tag
+        run: echo "::set-output name=pr_tag::pr-${{ github.run_number }}-${{ github.event.pull_request.number }}"
+  
 
       - name: Build application
-        run: go build -v -ldflags "-X main.version=${{ github.ref }}" -o hello-go .
+        run:  
+          go build -v -ldflags "-X main.version=${{ steps.pr_tag.outputs.pr_tag }}" -o ${{ inputs.artifact-name || github.event.repository.name }}
+
         working-directory: ${{ inputs.working-directory || 'src' }}
 
   
@@ -104,4 +110,4 @@ jobs:
         with:
           context: ${{ inputs.working-directory || 'src' }}
           push: false
-          tags: ${{ inputs.artifact-name || github.event.repository.name }}:(${{ github.ref }}-${{ env.BUILD_NUMBER }}) # Use Git tag and build number as the Docker image tag
+          tags: ${{ inputs.artifact-name || github.event.repository.name }}:${{ steps.pr_tag.outputs.pr_tag }} # Use the PR tag as the Docker image tag

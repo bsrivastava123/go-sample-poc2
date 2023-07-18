@@ -92,7 +92,7 @@ jobs:
       - name: Determine PR tag
         id: pr_tag
         if: ${{ github.ref != 'refs/heads/main' }}
-        run: echo "::set-output name=pr_tag::0.0.PR-${{ github.ref == 'refs/pull/'  && github.event.pull_request.number }}|| 'main'}}"
+        run: echo "::set-output name=${{ github.ref}}"
       
       - name: Build application
         run:  
@@ -105,9 +105,4 @@ jobs:
         id: build_number
         run: echo "BUILD_NUMBER=$(( ${{ github.run_number }} + ${{ github.event.pull_request.number }} ))" >> $GITHUB_ENV
   
-      - name: Build Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: ${{ inputs.working-directory || 'src' }}
-          push: false
-          tags: ${{ inputs.artifact-name || github.event.repository.name }}:${{ steps.pr_tag.outputs.pr_tag }} # Use the PR tag as the Docker image tag
+     

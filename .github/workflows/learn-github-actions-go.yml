@@ -91,7 +91,8 @@ jobs:
 
       - name: Determine PR tag
         id: pr_tag
-        run: echo "::set-output name=pr_tag::${{ github.ref == 'refs/pull/'* ? '0.0.PR-${{ github.event.pull_request.number }}-${{ github.run_number }}' : ${{github.ref }}
+        if: ${{ github.ref == 'refs/pull/'* }}
+        run: echo "::set-output name=pr_tag::0.0.PR-${{ github.event.pull_request.number }}-${{ github.run_number }}'
       
       - name: Build application
         run:  

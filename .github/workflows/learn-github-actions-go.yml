@@ -114,4 +114,4 @@ jobs:
         with:
           context: ${{ inputs.working-directory || 'src' }}
           push: false
-          tags: ${{ inputs.artifact-name || github.event.repository.name }}: ${{ steps.build_number2.BUILD_NUMBER }} # Use the PR tag as the Docker image tag
+          tags: ${{ inputs.artifact-name || github.event.repository.name }}:${{ steps.build_number2.BUILD_NUMBER }} # Use the PR tag as the Docker image tag

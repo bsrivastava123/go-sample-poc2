@@ -32,7 +32,7 @@ jobs:
       - name: Determine PR tag
         id: pr_tag
         if: startsWith( github.ref, 'refs/pull/' )
-        run: echo "::set-output name=pr_tag::0.0.PR-${{ github.event.pull_request.number}}.${{ github.event.runnumber}}"
+        run: echo "::set-output name=pr_tag::0.0.PR-${{ github.event.pull_request.number}}.${{ github.event.run_number}}"
 
       - name: Determine release tag
         id: release_tag

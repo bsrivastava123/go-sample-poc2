@@ -21,13 +21,73 @@ on:
         default: ${{ github.event.repository.name }}
 
 jobs:
-  build:
-    name: Build and upload
+  lint:
+    name: Linting
     runs-on: ubuntu-22.04
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with: 
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.x # Replace with the desired Go version
+
+      - name: run lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          working-directory: ${{ inputs.working-directory || 'src' }}
+            
+  unit-test:
+    name: Unit test
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@main
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.x # Replace with the desired Go version 
+          cache-dependency-path: src/go.sum
+  
+      - name: Install dependencies
+        working-directory: ${{ inputs.working-directory || 'src' }}
+        run: go mod download
+        
+      - name: Test
+        working-directory: ${{ inputs.working-directory || 'src' }}
+        run:
+          go test -v -cover ./... -json > TestResults-${{ inputs.artifact-name || github.event.repository.name }}.json
+       
+      - name: Upload Go test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: TestResults-${{ inputs.artifact-name || github.event.repository.name }}.json
+          path: ${{ inputs.working-directory || 'src' }}    
+
+  build:
+    name: Build and upload
+    runs-on: ubuntu-22.04
+    needs: [ unit-test, lint ]
+  
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: 1.x # Replace with the desired Go version
+          cache-dependency-path: src/go.sum
+
+      - name: Install dependencies
+        run: go mod download
+        working-directory: ${{ inputs.working-directory || 'src' }}
 
       - name: Determine PR tag
         id: pr_tag
@@ -39,5 +99,19 @@ jobs:
         if: startsWith( github.ref, 'refs/heads/main' )
         run: echo "::set-output name=release_tag::0.0.${{ github.run_number}}"
 
+      - name: Build application
+        run:  
+          go build -v -o ${{ inputs.artifact-name || github.event.repository.name }}
+        working-directory: ${{ inputs.working-directory || 'src' }}
 
-     
+  
+      - name: Set build number
+        id: build_number
+        run: echo "BUILD_NUMBER=$(( ${{ github.run_number }} + ${{ github.event.pull_request.number }} ))" >> $GITHUB_ENV
+  
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ inputs.working-directory || 'src' }}
+          push: false
+          tags: ${{ inputs.artifact-name || github.event.repository.name }}:${{ steps.pr_tag.outputs.pr_tag }} # Use the PR tag as the Docker image tag

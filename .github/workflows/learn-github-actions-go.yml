@@ -78,12 +78,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Set env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-      - name: Test
-        run: |
-          echo $RELEASE_VERSION
-          echo ${{ env.RELEASE_VERSION }}
 
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -105,26 +99,10 @@ jobs:
         if: startsWith( github.ref, 'refs/heads/main' )
         run: echo "::set-output name=release_tag::v0.${{ github.run_number}}"
 
-      - name: Set output
-        id: vars
-        run: echo "tag=${GITHUB_REF#refs/*/}" >> $GITHUB_OUTPUT
-
-      - name: Check output
-        env:
-          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
-        run: |
-          echo $RELEASE_VERSION
-          echo ${{ steps.vars.outputs.tag }}
-
       - name: Check output2
         env:
           RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
-        run: echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
-
-      - name: GitHub Tag Name example
-        run: |
-          echo "Tag name from GITHUB_REF_NAME: $GITHUB_REF_NAME"
-          echo "Tag name from github.ref_name: ${{  github.ref_name }}"    
+        run: echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV 
 
       - name: Build application
         run:  
@@ -135,6 +113,27 @@ jobs:
       - name: Set build number
         id: build_number
         run: echo "::set-output name=BUILD_NUMBER::${{steps.pr_tag.outputs.pr_tag || steps.release_tag.outputs.release_tag}}"
+
+
+      - name: Determine tag
+        id: tag
+        run: echo "::set-output name=tag::${{ github.ref == 'refs/pull/*' && 'pr' || github.ref }}"
+
+      - name: Set build version
+        id: build_version
+        run: echo "::set-output name=build_version::${{ steps.tag.outputs.tag }}-${{ github.run_number }}"
+
+      - name: Build Docker image2
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ inputs.working-directory || 'src' }}
+          push: false
+          tags: |
+            hello-go:${{ steps.tag.outputs.tag }}
+            hello-go:latest-${{ steps.tag.outputs.tag }}
+            hello-go:latest 
+          # Optionally, just "latest" without any tag
+  
   
       - name: Build Docker image
         uses: docker/build-push-action@v2

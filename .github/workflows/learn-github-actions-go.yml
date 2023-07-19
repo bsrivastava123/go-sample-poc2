@@ -97,7 +97,7 @@ jobs:
       - name: Determine release tag
         id: release_tag
         if: startsWith( github.ref, 'refs/heads/main' )
-        run: echo "::set-output name=release_tag::0.0.${{ github.run_number}}"
+        run: echo "::set-output name=release_tag::v0.${{ github.run_number}}"
 
       - name: Build application
         run:  

@@ -106,7 +106,7 @@ jobs:
 
   
       - name: Set build number
-        id: build_number2
+        id: build_number
         run: echo "BUILD_NUMBER=${{steps.pr_tag.outputs.pr_tag || steps.release_tag.outputs.release_tag}} " >> $GITHUB_ENV
   
       - name: Build Docker image
@@ -114,4 +114,4 @@ jobs:
         with:
           context: ${{ inputs.working-directory || 'src' }}
           push: false
-          tags: ${{ inputs.artifact-name || github.event.repository.name }}:${{ steps.build_number2.outputs.BUILD_NUMBER }} # Use the PR tag as the Docker image tag
+          tags: ${{ inputs.artifact-name || github.event.repository.name }}:${{ steps.build_number.outputs.BUILD_NUMBER }} # Use the PR tag as the Docker image tag

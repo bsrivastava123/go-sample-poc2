@@ -87,6 +87,9 @@ jobs:
 
       - name : get tag
         uses: oprypin/find-latest-tag@v1
+        with:
+          repository: ${{ github.repository }}
+          releases-only: false
         id: octokit  # The step ID to refer to later.
       
 

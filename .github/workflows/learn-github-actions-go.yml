@@ -37,7 +37,7 @@ jobs:
       - name: Determine release tag
         id: release_tag
         if: startsWith( github.ref, 'refs/heads/main' )
-        run: echo "::set-output name=release_tag::0.0.${{ github.event.runnumber}}"
+        run: echo "::set-output name=release_tag::0.0.${{ github.event.run_number}}"
 
 
      

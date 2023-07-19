@@ -4,7 +4,8 @@ FROM golang:1.20
 # Set the working directory inside the container
 WORKDIR /app
 
-COPY go.mod . # <- COPY go.mod and go.sum files to the workspace
+ # <- COPY go.mod and go.sum files to the workspace
+COPY go.mod .
 COPY go.sum .
 
 # Get dependancies - will also be cached if we won't change mod/sum

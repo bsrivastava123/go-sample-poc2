@@ -85,9 +85,17 @@ jobs:
         with:
           repository: ${{ github.repository }}
           releases-only: false
+
+      - name : get tag3
+        id: release_tag3
+        run: echo "::set-output name=t::$(git describe --tags `git rev-list --tags --max-count=1`)"
+          
         
       - name: Check output2
-        run: echo "${{steps.release_tag.outputs.tag }}"    
+        run: echo "${{steps.release_tag.outputs.tag }}"  
+        
+      - name: Check output3
+        run: echo "${{steps.release_tag3.outputs.t }}"  
       
       - name: Set up Go
         uses: actions/setup-go@v4

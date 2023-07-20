@@ -38,11 +38,9 @@ jobs:
         id: pr_tag
         if: startsWith( github.ref, 'refs/pull/' )
         run: echo "pr_tag=0.0.0-PR-${{ github.event.pull_request.number}}-${{ github.run_number}}" >> $GITHUB_OUTPUT
-      
-
 
       - name: tag_create
-      - uses: rickstaa/action-create-tag@v1
+        uses: rickstaa/action-create-tag@v1
         id: "tag_create"
           with:
             tag: "latest"

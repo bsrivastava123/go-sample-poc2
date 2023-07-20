@@ -21,99 +21,29 @@ on:
         default: ${{ github.event.repository.name }}
 
 jobs:
-  lint:
-    name: Linting
-    runs-on: ubuntu-22.04
 
+  build:
+    name: Build and upload
+    runs-on: ubuntu-22.04
+  
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         with: 
           fetch-depth: 0
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: 1.x # Replace with the desired Go version
 
-      - name: run lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          working-directory: ${{ inputs.working-directory || 'src' }}
-            
-  unit-test:
-    name: Unit test
-    runs-on: ubuntu-22.04
+      - name: Determine tag
+        id: tag
+        if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+        run: |
+          VERSION=`git tag -l --sort -version:refname | head -n 1`
+          VERSION_BITS=(${VERSION//./ })
+          VNUM1=${VERSION_BITS[0]}
+          VNUM2=${VERSION_BITS[1]}
+          VNUM3=${VERSION_BITS[2]}
+          VNUM4=$((VNUM3+1))
+          NEW_TAG="$VNUM1.$VNUM2.$VNUM4"
+          git tag $NEW_TAG
+          git push origin --tags
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@main
-
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: 1.x # Replace with the desired Go version 
-          cache-dependency-path: src/go.sum
-  
-      - name: Install dependencies
-        working-directory: ${{ inputs.working-directory || 'src' }}
-        run: go mod download
-        
-      - name: Test
-        working-directory: ${{ inputs.working-directory || 'src' }}
-        run:
-          go test -v -cover ./... -json > TestResults-${{ inputs.artifact-name || github.event.repository.name }}.json
-       
-      - name: Upload Go test results
-        uses: actions/upload-artifact@v3
-        with:
-          name: TestResults-${{ inputs.artifact-name || github.event.repository.name }}.json
-          path: ${{ inputs.working-directory || 'src' }}    
-
-  build:
-    name: Build and upload
-    runs-on: ubuntu-22.04
-    needs: [ unit-test, lint ]
-  
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      
-      - name: Set up Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: 1.x # Replace with the desired Go version
-          cache-dependency-path: src/go.sum
-
-      - name: Install dependencies
-        run: go mod download
-        working-directory: ${{ inputs.working-directory || 'src' }}
-
-      - name: Build application
-        run:  
-          go build -v -o ${{ inputs.artifact-name || github.event.repository.name }}
-        working-directory: ${{ inputs.working-directory || 'src' }}
-
-      - name: Determine PR
-        id: pr_tag
-        if: startsWith( github.ref, 'refs/pull/' )
-        run: echo "pr_tag=0.0.PR-${{ github.event.pull_request.number}}.${{ github.run_number}}" >> $GITHUB_OUTPUT
-      
-      - name : get tag
-        id: latest_tag 
-        if: startsWith( github.ref, 'refs/heads/main' )
-        uses: oprypin/find-latest-tag@v1
-        with:
-          repository: ${{ github.repository }}
-          releases-only: false 
-
-      - name: Set build number
-        id: build_number
-        run: echo "BUILD_NUMBER=${{steps.pr_tag.outputs.pr_tag || steps.latest_tag.outputs.tag}}" >> $GITHUB_OUTPUT
-
-      - name: Build Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: ${{ inputs.working-directory || 'src' }}
-          push: false
-          tags: ${{ inputs.artifact-name || github.event.repository.name}}:${{steps.build_number.outputs.BUILD_NUMBER }} # Use the PR tag as the Docker image tag

@@ -78,9 +78,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: Check output3
-        run: echo "${{steps.release_tag3.outputs.t }}"  
       
       - name: Set up Go
         uses: actions/setup-go@v4
@@ -100,20 +97,17 @@ jobs:
       - name: Determine PR
         id: pr_tag
         if: startsWith( github.ref, 'refs/pull/' )
-        run: echo "::set-output name=pr_tag::0.0.PR-${{ github.event.pull_request.number}}.${{ github.run_number}}"
+        run: echo "pr_tag=0.0.PR-${{ github.event.pull_request.number}}.${{ github.run_number}}" >> $GITHUB_OUTPUT
       
       - name : get tag
         id: latest_tag 
         if: startsWith( github.ref, 'refs/heads/main' )
-        uses: oprypin/find-latest-tag@v1
-        with:
-          repository: ${{ github.repository }}
-          releases-only: false 
-
+        run: tag= git describe --tags `git rev-list --tags --max-count=1` >> $GITHUB_OUTPUT
+        
       - name: Set build number
         id: build_number
         run: echo "::set-output name=BUILD_NUMBER::${{steps.pr_tag.outputs.pr_tag || steps.latest_tag.outputs.tag}}"
-        
+
       - name: Build Docker image
         uses: docker/build-push-action@v2
         with:

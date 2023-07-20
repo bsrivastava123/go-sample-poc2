@@ -31,9 +31,8 @@ jobs:
 
       - name : get latest tag
         id: latest_tag
-        run: echo "::set-output name=tag::(git describe --tags `git rev-list --tags --max-count=1`)" 
+        run:  "echo git describe --tags `git rev-list --tags --max-count=1`"
             
-
       - name: Check output3
         run: echo "${{steps.latest_tag.outputs.tag }}"  
     

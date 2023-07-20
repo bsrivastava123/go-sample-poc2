@@ -79,24 +79,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: 'Get Previous tag'
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-        with:
-          fallback: 1.0.0 # Optional fallback tag to use when no tag can be found
-
       - name : get tag
+        id: release_tag 
         uses: oprypin/find-latest-tag@v1
         with:
           repository: ${{ github.repository }}
           releases-only: false
-        id: octokit  # The step ID to refer to later.
-      
-
+        
       - name: Check output2
-        run: echo "${{steps.octokit.outputs.tag }}"    
+        run: echo "${{steps.release_tag.outputs.tag }}"    
       
-
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
@@ -113,9 +105,9 @@ jobs:
         run: echo "::set-output name=pr_tag::0.0.PR-${{ github.event.pull_request.number}}.${{ github.run_number}}"
 
       - name: Determine release tag
-        id: release_tag
+        id: release_tag2
         if: startsWith( github.ref, 'refs/heads/main' )
-        run: echo "::set-output name=release_tag::v0.${{ github.run_number}}"
+        run: echo "::set-output name=release_tag2::v0.${{ github.run_number}}"
 
       - name: Build application
         run:  
@@ -125,7 +117,7 @@ jobs:
   
       - name: Set build number
         id: build_number
-        run: echo "::set-output name=BUILD_NUMBER::${{steps.pr_tag.outputs.pr_tag || steps.release_tag.outputs.release_tag}}"
+        run: echo "::set-output name=BUILD_NUMBER::${{steps.pr_tag.outputs.pr_tag || steps.release_tag.outputs.tag}}"
 
     
       - name: Build Docker image

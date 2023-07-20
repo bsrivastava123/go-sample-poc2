@@ -101,7 +101,7 @@ jobs:
       - name: Determine PR
         id: pr_tag
         if: startsWith( github.ref, 'refs/pull/' )
-        run: echo "pr_tag=0.0.PR-${{ github.event.pull_request.number}}.${{ github.run_number}}" >> $GITHUB_OUTPUT
+        run: echo "pr_tag=0.0.0-PR-${{ github.event.pull_request.number}}-${{ github.run_number}}" >> $GITHUB_OUTPUT
       
       - name : get tag
         id: latest_tag 

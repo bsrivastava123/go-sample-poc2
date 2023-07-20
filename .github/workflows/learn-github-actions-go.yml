@@ -32,9 +32,6 @@ jobs:
         with: 
           fetch-depth: 0
 
-      - name: Build application
-        run: go build -v -ldflags "-X main.version=${{ github.ref }}" -o hello-go .
-
       - name: Determine tag
         id: tag
         run: |

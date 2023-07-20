@@ -35,6 +35,7 @@ jobs:
 
       - name: Determine tag
         id: tag
+        if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
         run: |
           VERSION=`git tag -l --sort -version:refname | head -n 1`
           VERSION_BITS=(${VERSION//./ })

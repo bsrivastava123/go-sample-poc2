@@ -46,4 +46,6 @@ jobs:
           NEW_TAG="$VNUM1.$VNUM2.$VNUM4"
           git tag $NEW_TAG
           git push origin --tags
+          echo ${{ github.event_name }}
+          echo ${{ github.github.event.pull_request.merged }}
 

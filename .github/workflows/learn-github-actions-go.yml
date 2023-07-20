@@ -79,21 +79,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name : get tag
-        id: release_tag 
-        uses: oprypin/find-latest-tag@v1
-        with:
-          repository: ${{ github.repository }}
-          releases-only: false
-
-      - name : get tag3
-        id: release_tag3
-        run: echo "::set-output name=t::$(git describe --tags `git rev-list --tags --max-count=1`)"
-          
-        
-      - name: Check output2
-        run: echo "${{steps.release_tag.outputs.tag }}"  
-        
       - name: Check output3
         run: echo "${{steps.release_tag3.outputs.t }}"  
       
@@ -107,25 +92,28 @@ jobs:
         run: go mod download
         working-directory: ${{ inputs.working-directory || 'src' }}
 
-      - name: Determine PR tag
-        id: pr_tag
-        if: startsWith( github.ref, 'refs/pull/' )
-        run: echo "::set-output name=pr_tag::0.0.PR-${{ github.event.pull_request.number}}.${{ github.run_number}}"
-
-      - name: Determine release tag
-        id: release_tag2
-        if: startsWith( github.ref, 'refs/heads/main' )
-        run: echo "::set-output name=release_tag2::v0.${{ github.run_number}}"
-
       - name: Build application
         run:  
           go build -v -o ${{ inputs.artifact-name || github.event.repository.name }}
         working-directory: ${{ inputs.working-directory || 'src' }}
 
-  
+      - name: Determine PR
+        id: pr_tag
+        if: startsWith( github.ref, 'refs/pull/' )
+        run: echo "::set-output name=pr_tag::0.0.PR-${{ github.event.pull_request.number}}.${{ github.run_number}}"
+      
+      - name : get latest tag
+        id: latest_tag
+        run: echo "::set-output name=tag::$(git describe --tags `git rev-list --tags --max-count=1`)" 
+        
+      - name: Determine main
+        id: main_version
+        if: startsWith( github.ref, 'refs/heads/main' )
+        run: echo "::set-output name=version::${{steps.latest_tag.outputs.tag }}"  
+
       - name: Set build number
         id: build_number
-        run: echo "::set-output name=BUILD_NUMBER::${{steps.pr_tag.outputs.pr_tag || steps.release_tag.outputs.tag}}"
+        run: echo "::set-output name=BUILD_NUMBER::${{steps.pr_tag.outputs.pr_tag || steps.main_version.outputs.version}}"
 
     
       - name: Build Docker image

@@ -115,8 +115,14 @@ jobs:
         id: build_number
         run: echo "BUILD_NUMBER=${{steps.pr_tag.outputs.pr_tag || steps.latest_tag.outputs.tag}}" >> $GITHUB_OUTPUT
 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ inputs.artifact-name || github.event.repository.name }}
+          path: ${{ inputs.working-directory || 'src' }}
+
       - name: Build Docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: ${{ inputs.working-directory || 'src' }}
           push: false

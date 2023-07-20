@@ -31,7 +31,6 @@ jobs:
 
       - name : get latest tag
         id: latest_tag
-        if: startsWith( github.ref, 'refs/heads/main' )
         run: echo "::set-output name=tag::(git describe --tags `git rev-list --tags --max-count=1`)" 
             
 

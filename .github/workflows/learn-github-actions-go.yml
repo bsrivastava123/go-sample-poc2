@@ -29,10 +29,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name : get latest tag
-        id: latest_tag
-        run:  "echo git describe --tags `git rev-list --tags --max-count=1`"
+      - name : get tag
+        id: release_tag 
+        uses: oprypin/find-latest-tag@v1
+        with:
+          repository: ${{ github.repository }}
+          releases-only: false
             
       - name: Check output3
-        run: echo "${{steps.latest_tag.outputs.tag }}"  
+        run: echo "${{steps.release_tag.outputs.tag }}"  
     

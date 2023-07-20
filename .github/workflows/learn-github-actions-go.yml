@@ -32,31 +32,19 @@ jobs:
         with: 
           fetch-depth: 0
 
-  
+      - name: Build application
+        run: go build -v -ldflags "-X main.version=${{ github.ref }}" -o hello-go .
 
-      - name: Determine PR
-        id: pr_tag
-        if: startsWith( github.ref, 'refs/pull/' )
-        run: echo "pr_tag=0.0.0-PR-${{ github.event.pull_request.number}}-${{ github.run_number}}" >> $GITHUB_OUTPUT
+      - name: Determine tag
+        id: tag
+        run: |
+          VERSION=`git describe --abbrev=0 --tags`
+          VERSION_BITS=(${VERSION//./ })
+          VNUM1=${VERSION_BITS[0]}
+          VNUM2=${VERSION_BITS[1]}
+          VNUM3=${VERSION_BITS[2]}
+          VNUM4=$((VNUM3+1))
+          NEW_TAG="$VNUM1.$VNUM2.$VNUM4"
+          git tag $NEW_TAG
+          git push origin --tags
 
-      - name: tag_create
-        uses: rickstaa/action-create-tag@v1
-        id: tag_create
-        with:
-          tag: "latest"
-          tag_exists_error: false
-          message: "Latest release"  
-            
-      - name : get tag
-        id: latest_tag 
-        if: startsWith( github.ref, 'refs/heads/main' )
-        uses: oprypin/find-latest-tag@v1
-        with:
-          repository: ${{ github.repository }}
-          releases-only: false       
-
-      - name: Set build number
-        id: build_number
-        run: echo "BUILD_NUMBER=${{steps.pr_tag.outputs.pr_tag || steps.latest_tag.outputs.tag || '0.0.1'}}" >> $GITHUB_OUTPUT  
-  
-    

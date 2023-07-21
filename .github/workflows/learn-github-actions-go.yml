@@ -49,7 +49,6 @@ jobs:
 
       - name : get tag
         id: latest_tag 
-        
         uses: oprypin/find-latest-tag@v1
         with:
           repository: ${{ github.repository }}
@@ -57,4 +56,4 @@ jobs:
 
       - name: set output
         id: output_tag
-        run: echo "${{ steps.latest_tag.outputs.tag }}"
+        run: echo "${{steps.latest_tag.outputs.tag}}"

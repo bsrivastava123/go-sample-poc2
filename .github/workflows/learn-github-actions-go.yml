@@ -117,6 +117,7 @@ jobs:
             NEW_TAG="$VNUM1.$VNUM2.$VNUM4"
             git tag $NEW_TAG
             git push origin --tags  
+            echo $NEW_TAG
 
       - name : get tag
         id: latest_tag 

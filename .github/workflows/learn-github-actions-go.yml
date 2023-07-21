@@ -37,18 +37,15 @@ jobs:
         id: tag
         #if: startsWith( github.ref, 'refs/heads/main' )
         run: |
-          VERSION=`git tag -l --sort -version:refname | head -n 1`
-          VERSION_BITS=(${VERSION//./ })
-          VNUM1=${VERSION_BITS[0]}
-          [[ $VNUM1 = '' ]] && VNUM1="0" || VNUM1="$VNUM1"
-          VNUM2=${VERSION_BITS[1]}
-          [[ $VNUM2 = '' ]] && VNUM2="0" || VNUM2="$VNUM1"
-          VNUM3=${VERSION_BITS[2]}
-          [[ $VNUM3 = '' ]] && VNUM3="0" || VNUM3="$VNUM1"
-          VNUM4=$((VNUM3+1))
-          NEW_TAG="$VNUM1.$VNUM2.$VNUM4"
-          git tag $NEW_TAG
-          git push origin --tags
+            VERSION=`git tag -l --sort -version:refname | head -n 1`
+            VERSION_BITS=(${VERSION//./ })
+            [[ ${VERSION_BITS[0]} = '' ]] && VNUM1="0" || VNUM1="${VERSION_BITS[0]}"
+            [[ ${VERSION_BITS[1]} = '' ]] && VNUM2="0" || VNUM2="${VERSION_BITS[1]}"
+            [[ ${VERSION_BITS[2]} = '' ]] && VNUM3="0" || VNUM3="${VERSION_BITS[2]}"
+            VNUM4=$((VNUM3+1))
+            NEW_TAG="$VNUM1.$VNUM2.$VNUM4"
+            git tag $NEW_TAG
+            git push origin --tags
 
       - name : get tag
         id: latest_tag 
@@ -57,4 +54,7 @@ jobs:
         with:
           repository: ${{ github.repository }}
           releases-only: false 
-          fallback: v0.0.0
+
+      - name: set output
+        id: output_tag
+        run: echo "${{steps.latest_tag.output.tag}}"

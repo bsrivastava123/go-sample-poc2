@@ -35,7 +35,7 @@ jobs:
 
       - name: Determine tag
         id: tag
-        #if: startsWith( github.ref, 'refs/heads/main' )
+       
         run: |
             VERSION=`git tag -l --sort -version:refname | head -n 1`
             VERSION_BITS=(${VERSION//./ })
@@ -49,7 +49,7 @@ jobs:
 
       - name : get tag
         id: latest_tag 
-        #if: startsWith( github.ref, 'refs/heads/main' )
+        
         uses: oprypin/find-latest-tag@v1
         with:
           repository: ${{ github.repository }}
@@ -57,4 +57,4 @@ jobs:
 
       - name: set output
         id: output_tag
-        run: echo "${{steps.latest_tag.output.tag}}"
+        run: echo "${{ steps.latest_tag.outputs.tag }}"

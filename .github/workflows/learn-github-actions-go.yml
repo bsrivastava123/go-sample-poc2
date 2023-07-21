@@ -52,7 +52,7 @@ jobs:
 
       - name : get tag
         id: latest_tag 
-        if: startsWith( github.ref, 'refs/heads/main' )
+        #if: startsWith( github.ref, 'refs/heads/main' )
         uses: oprypin/find-latest-tag@v1
         with:
           repository: ${{ github.repository }}

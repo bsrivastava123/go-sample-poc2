@@ -36,7 +36,7 @@ jobs:
 
       - name: Determine tag
         id: tag
-        if: startsWith( github.ref, 'refs/heads/main' )
+        #if: startsWith( github.ref, 'refs/heads/main' )
         run: |
           VERSION=`git tag -l --sort -version:refname | head -n 1`
           VERSION_BITS=(${VERSION//./ })
@@ -48,3 +48,11 @@ jobs:
           git tag $NEW_TAG
           git push origin --tags
 
+      - name : get tag
+        id: latest_tag 
+        if: startsWith( github.ref, 'refs/heads/main' )
+        uses: oprypin/find-latest-tag@v1
+        with:
+          repository: ${{ github.repository }}
+          releases-only: false 
+          fallback: v0.0.0

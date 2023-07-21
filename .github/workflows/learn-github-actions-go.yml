@@ -5,6 +5,7 @@ on:
     branches:
       - main
   pull_request:
+    types: [ opened, ]
     branches:
       - main
   workflow_call:
@@ -35,7 +36,7 @@ jobs:
 
       - name: Determine tag
         id: tag
-        if: github.event.pull_request.merged
+        if: startsWith( github.ref, 'refs/heads/main' )
         run: |
           VERSION=`git tag -l --sort -version:refname | head -n 1`
           VERSION_BITS=(${VERSION//./ })
@@ -46,6 +47,4 @@ jobs:
           NEW_TAG="$VNUM1.$VNUM2.$VNUM4"
           git tag $NEW_TAG
           git push origin --tags
-          echo ${{ github.event_name }}
-          echo ${{ github.github.event.pull_request.merged }}
 

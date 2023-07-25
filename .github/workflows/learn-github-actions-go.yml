@@ -139,6 +139,12 @@ jobs:
 
       - name: Package Helm Chart
         run: helm package helm/go-service-poc2 --destination helm-chart
+
+      - name: Upload Artifact2
+        uses: actions/upload-artifact@v3
+        with:
+          name: hello-go-chart-0.1.0.tgz
+          path: helm-chart/hello-go-chart-0.1.0.tgz
       
                 
               

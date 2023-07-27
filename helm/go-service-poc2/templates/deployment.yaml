@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "hello-go-chart.fullname" . }}
+  name: {{ include "go-service-poc2.fullname" . }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ include "hello-go-chart.fullname" . }}
+      app: {{ include "go-service-poc2.fullname" . }}
   template:
     metadata:
       labels:
-        app: {{ include "hello-go-chart.fullname" . }}
+        app: {{ include "go-service-poc2.fullname" . }}
     spec:
       containers:
         - name: {{ .Chart.Name }}

@@ -1,10 +1,9 @@
 # Default values for hello-go-chart.
 replicaCount: 1
 image:
-  repository: go-service-poc2/hello-go2
-  
+  repository: go-service-poc2/hello-go
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 service:
   port: 8080
   type: ClusterIP

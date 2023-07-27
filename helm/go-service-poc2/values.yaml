@@ -2,6 +2,7 @@
 replicaCount: 1
 image:
   repository: go-service-poc2/hello-go2
+  
   tag: latest
   pullPolicy: IfNotPresent
 service:

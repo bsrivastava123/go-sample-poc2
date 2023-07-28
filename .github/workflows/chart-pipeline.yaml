@@ -32,5 +32,5 @@ jobs:
         - name: Upload Artifact
           uses: actions/upload-artifact@v3
           with:
-                name: ${{ inputs.artifact-name || github.event.repository.name }}-chart-${{env.BUILD_NUMBER }}
+                name: ${{ inputs.artifact-name || github.event.repository.name }}-chart-${{ github.event.pull_request.number}}-${{ github.run_number}}
                 path: helm-chart

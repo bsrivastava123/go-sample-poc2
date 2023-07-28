@@ -135,15 +135,14 @@ jobs:
         with:
           context: ${{ inputs.working-directory || 'src' }}
           push: false
-          tags: go-service-poc2:latest
-
+          tags: ${{ inputs.artifact-name || github.event.repository.name}}:${{steps.build_number.outputs.BUILD_NUMBER }}
+          
       - name: Package Helm Chart
         run: helm package helm/${{ inputs.artifact-name || github.event.repository.name }} --destination helm-chart
-  
+    
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.artifact-name || github.event.repository.name }}-chart-${{steps.build_number.outputs.BUILD_NUMBER }}
           path: helm-chart
-        
-              
+      

@@ -47,7 +47,6 @@ jobs:
           run: helm package helm/${{ inputs.chart-directory || github.event.repository.name}} --destination helm-chart
 
         - name: Upload Artifact
-          if: startsWith( github.ref, 'refs/pull/' )
           uses: actions/upload-artifact@v3
           with:
                 name: ${{ inputs.chart-directory || github.event.repository.name}}-chart-${{steps.build_number.outputs.BUILD_NUMBER }}

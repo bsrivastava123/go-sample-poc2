@@ -118,7 +118,7 @@ jobs:
           NEW_TAG="$VNUM1.$VNUM2.$VNUM3"
           git tag $NEW_TAG
           git push origin --tags  
-          echo "NEW_BUILD_VERSION=${NEW_TAG:1}" >> $GITHUB_OUTPUT 
+          echo "NEW_BUILD_VERSION=${NEW_TAG}" >> $GITHUB_OUTPUT 
 
       - name: Set build number
         id: build_number

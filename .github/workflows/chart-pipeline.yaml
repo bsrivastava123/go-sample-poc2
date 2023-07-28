@@ -9,9 +9,8 @@ on:
       - main
   workflow_call:
     inputs:
-
-      artifact-name:
-        required: false
+      chart-directory:
+        required: true
         type: string
         default: ${{ github.event.repository.name }}
 
@@ -42,14 +41,14 @@ jobs:
              
         - name: Set build number
           id: build_number
-          run: echo "BUILD_NUMBER=${{steps.pr_tag.outputs.pr_tag ||steps.release_tag.outputs.tag}}" >> $GITHUB_ENV 
+          run: echo "BUILD_NUMBER=${{steps.pr_tag.outputs.pr_tag ||steps.release_tag.outputs.tag}}" >> $GITHUB_OUTPUT 
               
         - name: Package Helm Chart
-          run: helm package helm/${{ inputs.artifact-name || github.event.repository.name }} --destination helm-chart
+          run: helm package helm/${{ inputs.chart-directory}} --destination helm-chart
 
         - name: Upload Artifact
           if: startsWith( github.ref, 'refs/pull/' )
           uses: actions/upload-artifact@v3
           with:
-                name: ${{ inputs.artifact-name || github.event.repository.name }}-chart-${{env.BUILD_NUMBER }}
+                name: ${{ inputs.chart-directory }}-chart-${{steps.build_number.outputs.BUILD_NUMBER }}
                 path: helm-chart

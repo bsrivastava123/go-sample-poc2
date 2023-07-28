@@ -34,11 +34,16 @@ jobs:
              repository: ${{ github.repository }}
              releases-only: false
 
+        - name: Set build number
+         id: build_number
+         run: echo "BUILD_NUMBER=${{steps.pr_tag.outputs.pr_tag ||steps.release_tag.outputs.tag}}" >> $GITHUB_ENV 
+              
         - name: Package Helm Chart
           run: helm package helm/${{ inputs.artifact-name || github.event.repository.name }} --destination helm-chart
 
         - name: Upload Artifact
+          if: startsWith( github.ref, 'refs/pull/' )
           uses: actions/upload-artifact@v3
           with:
-                name: ${{ inputs.artifact-name || github.event.repository.name }}-chart-${{steps.release_tag.outputs.tag}}
+                name: ${{ inputs.artifact-name || github.event.repository.name }}-chart-${{env.BUILD_NUMBER }}
                 path: helm-chart

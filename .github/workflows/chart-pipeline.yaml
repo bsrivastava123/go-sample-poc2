@@ -26,6 +26,14 @@ jobs:
           with: 
             fetch-depth: 0
 
+       
+        - name : get tag
+          id: release_tag 
+          uses: oprypin/find-latest-tag@v1
+          with:
+             repository: ${{ github.repository }}
+             releases-only: false
+
         - name: Package Helm Chart
           run: helm package helm/${{ inputs.artifact-name || github.event.repository.name }} --destination helm-chart
 

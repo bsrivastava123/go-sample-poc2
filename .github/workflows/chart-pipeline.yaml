@@ -50,5 +50,5 @@ jobs:
           if: startsWith( github.ref, 'refs/pull/' )
           uses: actions/upload-artifact@v3
           with:
-                name: ${{ inputs.chart-directory }}-chart-${{steps.build_number.outputs.BUILD_NUMBER }}
+                name: ${{ inputs.chart-directory || github.event.repository.name}}-chart-${{steps.build_number.outputs.BUILD_NUMBER }}
                 path: helm-chart

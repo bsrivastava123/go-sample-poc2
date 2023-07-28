@@ -34,6 +34,11 @@ jobs:
              repository: ${{ github.repository }}
              releases-only: false
 
+        - name: Determine PR
+          id: pr_tag
+          if: startsWith( github.ref, 'refs/pull/' )
+          run: echo "pr_tag=0.0.0-PR-${{ github.event.pull_request.number}}-${{ github.run_number}}" >> $GITHUB_OUTPUT
+                
         - name: Set build number
           id: build_number
           run: echo "BUILD_NUMBER=${{steps.pr_tag.outputs.pr_tag ||steps.release_tag.outputs.tag}}" >> $GITHUB_ENV 

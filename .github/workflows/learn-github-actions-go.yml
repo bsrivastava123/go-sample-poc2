@@ -122,12 +122,12 @@ jobs:
 
       - name: Set build number
         id: build_number
-        run: echo "BUILD_NUMBER=${{steps.pr_tag.outputs.pr_tag || steps.create_tag.outputs.NEW_BUILD_VERSION}}" >> $GITHUB_OUTPUT 
+        run: echo "BUILD_NUMBER=${{steps.pr_tag.outputs.pr_tag || steps.create_tag.outputs.NEW_BUILD_VERSION}}" >> $GITHUB_ENV 
     
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ inputs.artifact-name || github.event.repository.name }}-${{steps.build_number.outputs.BUILD_NUMBER }}
+          name: ${{ inputs.artifact-name || github.event.repository.name }}-${{env.BUILD_NUMBER }}
           path: ${{ inputs.working-directory || 'src' }}
   
       - name: Build Docker image
@@ -135,6 +135,6 @@ jobs:
         with:
           context: ${{ inputs.working-directory || 'src' }}
           push: false
-          tags: ${{ inputs.artifact-name || github.event.repository.name}}:${{steps.build_number.outputs.BUILD_NUMBER }}
+          tags: ${{ inputs.artifact-name || github.event.repository.name}}:${{env.BUILD_NUMBER}}
         
       

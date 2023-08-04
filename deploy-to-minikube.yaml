@@ -25,6 +25,7 @@ spec:
                           memory: 10Mi
                   ports:
                       - containerPort: 8080
+                        protocol: TCP
 ---
 apiVersion: v1
 kind: Service

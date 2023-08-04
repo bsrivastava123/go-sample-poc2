@@ -1,21 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: example
-spec:
+    name: go-sample-poc2
     selector:
         matchLabels:
-            app: example
+            name: go-sample-poc2
     replicas: 2
     template:
         metadata:
             labels:
-                app: example
+                app: go-sample-poc2
         spec:
             containers:
-                - name: example-api
+                - name: go-sample-poc2
                   imagePullPolicy: Never
-                  image: local/example:latest
+                  image: go-sample-poc2:latest
                   resources:
                       limits:
                           cpu: 50m
@@ -29,11 +28,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: example
+    name: go-sample-poc2
 spec:
-    type: NodePort
+    type: ClusterIP
     selector:
-        app: example
+        app: go-sample-poc2
     ports:
-        - port: 8080
-          targetPort: 8080
+        - name: http
+          port: 8080
+          targetPort: http
+          protocol: TCP

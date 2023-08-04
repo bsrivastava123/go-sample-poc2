@@ -15,7 +15,7 @@ jobs:
       run: |
         export SHELL=/bin/bash
         eval $(minikube -p minikube docker-env)
-        docker build -f ./Dockerfile -t local/example .
+        docker build -f ./Dockerfile -t go-sample-poc2 .
         echo -n "verifying images:"
         docker images        
     - name: Deploy to minikube
@@ -24,6 +24,6 @@ jobs:
     - name: Test service URLs
       run: |
         minikube service list
-        minikube service example --url
+        minikube service go-sample-poc2 --url
         echo "------------------opening the service------------------"
-        curl $(minikube service example --url)  
+        curl $(minikube service go-sample-poc2 --url)  

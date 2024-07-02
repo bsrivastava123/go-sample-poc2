@@ -12,7 +12,7 @@ func Hello() string {
 	uuid := strings.Replace(uuidWithHyphen.String(), "-", "", -1)
 	fmt.Println(uuid)
 
-	return "Hello, world"
+	return "Hello, world1"
 
 }
 

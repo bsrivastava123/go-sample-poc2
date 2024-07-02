@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - develop
   pull_request:
     branches:
       - main
+      - develop
   workflow_call:
     inputs:
       working-directory:
@@ -34,7 +36,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v4
         with:
-          go-version: 1.x # Replace with the desired Go version  
+          go-version: 1.x # Replace with the desired Go version  test
 
       - name: run lint
         uses: golangci/golangci-lint-action@v3

@@ -51,6 +51,6 @@ jobs:
         id: version_number
         run: echo "VERSION_NUMBER=${{ steps.determine_branch_version.outputs.BRANCH_VERSION}}" >> $GITHUB_OUTPUT
       
-      - name: Set version number2
+      - name: Set version number3
         id: version_number2
         run: echo "GITHUB_REF=${{ github.ref }}" >> $GITHUB_OUTPUT

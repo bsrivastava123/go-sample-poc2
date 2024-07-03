@@ -39,11 +39,11 @@ jobs:
       - name: Create tag1
         id: determine_branch_version1
         if: startsWith( github.ref, 'refs/heads/main' ) != true && startsWith( github.ref, 'refs/heads/' ) == true
-        run: echo "BRANCH_VERSION2=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT 
+        run: echo "BRANCH_VERSION=${GITHUB_REF##*/}-${{ github.run_number}}" >> $GITHUB_OUTPUT 
 
       - name: Set version number
         id: version_number
-        run: echo "VERSION_NUMBER=${{ steps.determine_branch_version1.outputs.BRANCH_VERSION2}}" >> $GITHUB_OUTPUT
+        run: echo "VERSION_NUMBER=${{ steps.determine_branch_version1.outputs.BRANCH_VERSION}}" >> $GITHUB_OUTPUT
       
       - name: Set version number3
         id: version_number2

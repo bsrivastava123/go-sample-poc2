@@ -36,20 +36,14 @@ jobs:
         if: startsWith( github.ref, 'refs/pull/' )
         run: echo "pr_tag=0.0.0-PR-${{ github.event.pull_request.number}}-${{ github.run_number}}" >> $GITHUB_OUTPUT
       
-      # when pr is merged in other than main branch, add default tag
-      - name: Create tag
-        id: determine_branch_version
-        if: startsWith( github.ref, 'refs/heads/main' ) != true && startsWith( github.ref, 'refs/heads/' ) == true
-        run: echo "BRANCH_VERSION=${{ github.ref}}-${{ github.run_number}}" >> $GITHUB_OUTPUT     
-
       - name: Create tag1
         id: determine_branch_version1
         if: startsWith( github.ref, 'refs/heads/main' ) != true && startsWith( github.ref, 'refs/heads/' ) == true
-        run: echo "running on branch ${GITHUB_REF##*/}" >> $GITHUB_OUTPUT 
+        run: echo "BRANCH_VERSION2=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT 
 
       - name: Set version number
         id: version_number
-        run: echo "VERSION_NUMBER=${{ steps.determine_branch_version.outputs.BRANCH_VERSION}}" >> $GITHUB_OUTPUT
+        run: echo "VERSION_NUMBER=${{ steps.determine_branch_version1.outputs.BRANCH_VERSION2}}" >> $GITHUB_OUTPUT
       
       - name: Set version number3
         id: version_number2

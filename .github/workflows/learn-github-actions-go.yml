@@ -45,7 +45,7 @@ jobs:
       - name: Create tag1
         id: determine_branch_version1
         if: startsWith( github.ref, 'refs/heads/main' ) != true && startsWith( github.ref, 'refs/heads/' ) == true
-        run: echo "running on branch ${{ github.ref##*/ }}" >> $GITHUB_OUTPUT 
+        run: echo "running on branch ${GITHUB_REF##*/}" >> $GITHUB_OUTPUT 
 
       - name: Set version number
         id: version_number
